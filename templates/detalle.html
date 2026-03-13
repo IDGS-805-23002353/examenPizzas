@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recibo de Pedido #{{ pedido.id }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .font-mono-custom { font-family: 'Space Mono', monospace; }
+        .paper-edge {
+            background-image: radial-gradient(circle at 10px -5px, transparent 12px, white 13px);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="bg-orange-50 font-sans p-4 md:p-8">
+
+<div class="max-w-2xl mx-auto">
+    <a href="{{ url_for('index') }}" class="inline-flex items-center text-orange-800 font-medium mb-8 hover:opacity-70 transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        Regresar al mostrador
+    </a>
+
+    <div class="relative bg-white shadow-2xl rounded-sm border-t-8 border-orange-500 overflow-hidden">
+        
+        <div class="h-4 paper-edge w-full absolute top-0 left-0 opacity-20"></div>
+
+        <div class="p-8 md:p-12">
+            <div class="text-center mb-10">
+                <div class="inline-block p-3 bg-orange-100 rounded-full mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-mono-custom font-bold text-slate-800 uppercase tracking-tighter">Recibo de Venta</h1>
+                <p class="text-slate-400 font-mono-custom text-sm mt-2">ID Transacción: {{ pedido.id }}</p>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between border-y border-dashed border-slate-200 py-6 mb-8 gap-4">
+                <div>
+                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Cliente</span>
+                    <span class="text-lg font-mono-custom font-bold text-slate-700">{{ pedido.cliente.nombre }}</span>
+                </div>
+                <div class="md:text-right">
+                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Fecha y Hora</span>
+                    <span class="text-md font-mono-custom text-slate-700">{{ pedido.fecha_pedido }}</span>
+                </div>
+            </div>
+
+           <div class="space-y-6">
+            {% for item in detalles %}
+            <div class="flex justify-between items-start">
+                <div class="flex-1">
+                    <div class="flex items-center">
+                        <span class="text-orange-600 font-bold mr-2">{{ item.cantidad }}x</span>
+                        
+                        <h4 class="font-mono-custom font-bold text-slate-800 uppercase text-md">Pizza {{ item.tamaño }}</h4>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1 italic pl-6">{{ item.ingredientes }}</p>
+                </div>
+                <span class="font-mono-custom font-bold text-slate-700">${{ item.precio * item.cantidad }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+            <div class="border-b-2 border-dotted border-slate-200 my-10"></div>
+            <div class="space-y-2">
+              
+                <div class="flex justify-between text-2xl font-mono-custom font-black text-slate-900 pt-4">
+                    <span>TOTAL</span>
+                    <span class="text-orange-600">${{ pedido.total }}</span>
+                </div>
+            </div>
+            </div>
+
+            
+        </div>
+    </div>
+    
+    <div class="mt-8 text-center">
+        <button onclick="window.print()" class="bg-white border-2 border-orange-200 text-orange-600 px-6 py-2 rounded-full font-bold text-sm hover:bg-orange-600 hover:text-white transition-all shadow-sm">
+            Imprimir Comprobante
+        </button>
+    </div>
+</div>
+
+</body>
+</html>

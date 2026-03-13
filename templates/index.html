@@ -1,0 +1,273 @@
+{% import "_macros.html" as macros %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzería</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+</script>
+<body class=" bg-orange-50 font-sans p-4 md:p-8 font-sans leading-normal tracking-normal">
+
+<div class="container mx-auto p-4">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="space-y-2">
+        {% for category, message in messages %}
+          <div class="
+            px-4 py-3 rounded-lg shadow-md
+            {% if category == 'success' %} bg-green-100 text-green-800 border border-green-300 {% endif %}
+            {% if category == 'warning' %} bg-yellow-100 text-yellow-800 border border-yellow-300 {% endif %}
+            {% if category == 'error' %} bg-red-100 text-red-800 border border-red-300 {% endif %}
+          ">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+</div>
+<div class="container mx-auto p-500">
+    <div class="bg-white rounded-xl shadow-lg mb-8 overflow-hidden border border-slate-200">
+        <div class="bg-orange-600 px-6 py-4">
+            <h1 class="text-xl font-bold text-white flex items-center">
+                 Registro de Pedido
+            </h1>
+        </div>
+        
+        <form action="" method="POST" class="p-8">
+            {{form.csrf_token}}
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+           
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div>
+                   
+                    {{ macros.camposNuevos(form.nombre, class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all") }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Dirección</label>
+                    {{ form.direccion(class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all") }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Teléfono</label>
+                    {{ form.telefono(class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all") }}
+                </div>
+            </div>
+
+            <hr class="mb-8 border-slate-100">
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                
+                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-4">Tamaño de Pizza</h3>
+                    <div class="space-y-2 custom-radio-group">
+                        {{ form.tamaño }}
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-4">Ingredientes ($10 c/u)</h3>
+                    <div class="space-y-2 grid grid-cols-1">
+                        {{ form.ingredientes }}
+                    </div>
+                </div>
+
+                <div class="flex flex-col h-full justify-between space-y-4">
+                    <div class="p-5 bg-orange-50 rounded-xl border border-orange-100">
+                        <label class="block text-sm font-bold text-orange-900 mb-2">Número de Pizzas</label>
+                        {{ form.numeroPizzas(class="w-full text-center text-2xl font-bold py-2 rounded-lg border-2 border-orange-200 focus:border-orange-500 outline-none", type="number", value="1") }}
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-xl shadow-md transition-all transform hover:-translate-y-1 active:scale-95">
+                        Agregar al Pedido
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-md border border-slate-200 p-6">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 flex justify-between items-center">
+                Detalle de la Orden
+                <span class="text-xs font-normal text-slate-400">ID: #{{ range(1000, 9999) | random }}</span>
+            </h2>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-600 uppercase text-xs font-bold">
+                            <th class="px-4 py-3 border-b">Tamaño</th>
+                            <th class="px-4 py-3 border-b">Ingredientes</th>
+                            <th class="px-4 py-3 border-b text-center">Cant.</th>
+                            <th class="px-4 py-3 border-b text-right">Subtotal</th>
+                          
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-700">
+                                        
+                        {% for pizza in carrito %}
+                       <tr class="fila cursor-pointer hover:bg-slate-200 border-b" data-indice="{{ loop.index0 }}">
+                            <td class="px-4 py-4 font-medium">{{ pizza.tamaño }}</td>
+                            <td class="px-4 py-4">{{ pizza.ingredientes }}</td>
+                            <td class="px-4 py-4 text-center">{{ pizza.cantidad }}</td>
+                            <td class="px-4 py-4 text-right font-bold text-emerald-600">${{ pizza.subtotal }}</td>
+                            
+                               
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    
+                </table>
+            </div>
+            
+            <div class="mt-6 flex gap-4">
+            <form action="{{ url_for('quitar_item') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="hidden" name="indice" id="indiceSeleccionado">
+                <button type="submit"
+                    class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg">
+                    Quitar
+                    </button>
+            </form>
+
+            <form action="{{ url_for('terminar') }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <button type="submit"
+                class="bg-amber-400 hover:bg-amber-500 text-amber-900 font-bold py-2 px-6 rounded-lg">
+                Terminar Pedido
+            </button>
+        </form>
+        </div>
+        </div>
+
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-md border border-slate-200 p-6">
+
+        
+
+    <h2 class="text-xl font-bold text-slate-800 mb-6 border-b pb-3">
+    {{ titulo_ventas }}
+    </h2>
+
+    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-8">
+
+        <h3 class="text-sm font-bold text-slate-600 mb-3 uppercase">
+        Buscar ventas
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+     
+
+        
+        <form action="{{ url_for('consulta_dia') }}" method="POST" class="flex items-center gap-2">
+            {{ form.csrf_token }}
+             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <input type="text" name="dia_semana" placeholder="Ej: lunes"
+                class="w-36 flex-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-400 outline-none">
+            <button type="submit" class="bg-orange-600 text-white px-3 py-2 rounded-lg hover:bg-orange-700 flex items-center justify-center">
+      
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
+            </svg>
+        </button>
+        </form>
+
+      
+        <form action="{{ url_for('consulta_mes') }}" method="POST" class="flex items-center gap-2">
+            {{ form.csrf_token }}
+             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <input type="text" name="mes_texto" placeholder="Ej: marzo"
+                class="w-36 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-400 outline-none">
+             <button type="submit" class="bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 flex items-center justify-center">
+      
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
+            </svg>
+        </button>
+</form>
+
+</div>
+</div>
+
+
+
+    <div class="space-y-3 max-h-64 overflow-y-auto">
+
+        {% for venta in ventas %}
+
+        <div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg border">
+
+            <div>
+                <p class="font-semibold text-slate-700">
+                    {{ venta.cliente.nombre }}
+                </p>
+
+               
+            </div>
+
+            <div class="flex items-center gap-4">
+
+                <span class="font-bold text-green-600">
+                    ${{ venta.total }}
+                </span>
+
+                <a href="{{ url_for('detalle', id_pedido=venta.id) }}"
+                    class="bg-orange-500 text-white text-xs px-3 py-1 rounded-lg hover:bg-orange-600">
+                    Ver detalle
+                </a>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    
+    <div class="mt-6 pt-4 border-t text-center">
+
+        <p class="text-sm text-slate-500 uppercase">
+            Total de ventas del día
+        </p>
+
+        <h3 class="text-4xl font-extrabold text-orange-600 mt-2">
+            ${{ total_dia }}
+        </h3>
+
+    </div>
+
+</div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function(){
+
+let filas = document.querySelectorAll(".fila");
+let inputIndice = document.getElementById("indiceSeleccionado");
+
+filas.forEach(fila => {
+
+    fila.addEventListener("click", function(){
+
+        filas.forEach(f => f.classList.remove("bg-gray-300"));
+
+        this.classList.add("bg-gray-300");
+
+        inputIndice.value = this.dataset.indice;
+
+    });
+
+});
+
+});
+
+</script>
+
+</body>
+</html>
