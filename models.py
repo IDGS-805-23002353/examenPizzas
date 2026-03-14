@@ -60,8 +60,7 @@ class Pedidos(db.Model):
     )
     
     fecha_pedido = db.Column(
-        db.DateTime,
-        server_default=db.func.now()       
+        db.DateTime     
     )
     
     total = db.Column(db.Numeric(10,2))

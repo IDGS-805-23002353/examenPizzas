@@ -1,4 +1,4 @@
-from wtforms import Form, SelectField, TextAreaField
+from wtforms import DateField, Form, SelectField, TextAreaField
 from wtforms import IntegerField, StringField, PasswordField
 from wtforms import EmailField 
 from wtforms import validators 
@@ -14,15 +14,15 @@ class UserForm(Form):
     
     id=IntegerField("id")
     nombre=StringField("Nombre",[
-        validators.DataRequired(message="El campo es requerido"),
+        validators.DataRequired(message="Ingresa el nombre del cliente"),
         
         ])
     
     direccion =StringField("Dirección",[
-        validators.DataRequired(message="El campo es requerido"),
+        validators.DataRequired(message="La dirección es requerida"),
         ])
     telefono=StringField("Teléfono", [
-        validators.DataRequired(message="El campo es requerido"),
+        validators.DataRequired(message="Ingresa el número teléfono"),
         validators.length(min=10, max=10, message="Ingrese un número de teléfono válido")
         ])
     
@@ -46,3 +46,8 @@ class UserForm(Form):
                                 validators=[DataRequired(message="Ingrese la cantidad de pizzas"),
                                             NumberRange(min=1, message="Debe ser al menos 1")])
  
+    fecha_pedido = DateField(
+    "Fecha del pedido",
+    format='%Y-%m-%d',
+    validators=[DataRequired(message="Seleccione la fecha del pedido")]
+)

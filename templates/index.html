@@ -46,13 +46,13 @@
                     {{ macros.camposNuevos(form.nombre, class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all") }}
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Dirección</label>
-                    {{ form.direccion(class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all") }}
+                    
+                    {{ macros.camposNuevos(form.direccion, class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all") }}
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Teléfono</label>
-                    {{ form.telefono(class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all") }}
+                    {{ macros.camposNuevos(form.telefono, class="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all") }}
                 </div>
+
             </div>
 
             <hr class="mb-8 border-slate-100">
@@ -78,7 +78,16 @@
                         <label class="block text-sm font-bold text-orange-900 mb-2">Número de Pizzas</label>
                         {{ form.numeroPizzas(class="w-full text-center text-2xl font-bold py-2 rounded-lg border-2 border-orange-200 focus:border-orange-500 outline-none", type="number", value="1") }}
                     </div>
-                    
+
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-600 mb-2">
+                        Fecha del pedido
+                    </label>
+                    {{ form.fecha_pedido(
+                        class="w-full px-4 py-2 rounded-lg border-2 border-orange-200 focus:border-orange-500 outline-none"
+                    ) }}
+                </div>
+                                    
                     <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-xl shadow-md transition-all transform hover:-translate-y-1 active:scale-95">
                         Agregar al Pedido
                     </button>
@@ -211,7 +220,7 @@
 
             <div class="flex items-center gap-4">
 
-                <span class="font-bold text-green-600">
+                <span class="font-bold text-black-600">
                     ${{ venta.total }}
                 </span>
 

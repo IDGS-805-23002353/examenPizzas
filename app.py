@@ -43,6 +43,7 @@ def index():
         session['carrito'] = []
 
     if request.method == 'POST' and form.validate():
+        session['fecha_pedido'] = form.fecha_pedido.data
         precios = {'Chica': 40, 'Mediana': 80, 'Grande': 120}
         precio_base = precios.get(form.tamaño.data, 0)
         costo_ingredientes = len(form.ingredientes.data) * 10
@@ -102,31 +103,58 @@ def terminar():
 
     total_final = sum(item['subtotal'] for item in carrito)
     cliente = session.get('cliente_data')
+    fecha_pedido_raw = session.get('fecha_pedido')
 
     
-    nuevo_c = Clientes(nombre=cliente['nombre'], direccion=cliente['direccion'], telefono=cliente['telefono'])
+    try:
+        
+        fecha_final = datetime.strptime(fecha_pedido_raw, '%a, %d %b %Y %H:%M:%S GMT')
+    except (ValueError, TypeError):
+        
+        fecha_final = datetime.now()
+    
+
+    nuevo_c = Clientes(
+        nombre=cliente['nombre'],
+        direccion=cliente['direccion'],
+        telefono=cliente['telefono']
+    )
     db.session.add(nuevo_c)
     db.session.flush()
 
-    nuevo_p = Pedidos(id_cliente=nuevo_c.id, total=total_final)
+    nuevo_p = Pedidos(
+        id_cliente=nuevo_c.id,
+        total=total_final,
+        fecha_pedido=fecha_final  
+    )
     db.session.add(nuevo_p)
     db.session.flush()
 
     for item in carrito:
-        pizza_db = Pizzas(tamaño=item['tamaño'], ingredientes=item['ingredientes'], precio=item['subtotal'])
+        pizza_db = Pizzas(
+            tamaño=item['tamaño'],
+            ingredientes=item['ingredientes'],
+            precio=item['subtotal']
+        )
         db.session.add(pizza_db)
         db.session.flush()
-        db.session.add(Detalle_pedido(id_pedido=nuevo_p.id, id_pizza=pizza_db.id, cantidad=item['cantidad']))
+
+        db.session.add(
+            Detalle_pedido(
+                id_pedido=nuevo_p.id,
+                id_pizza=pizza_db.id,
+                cantidad=item['cantidad']
+            )
+        )
 
     db.session.commit()
 
-    
     flash(f"¡Pedido procesado con éxito! Total a pagar: ${total_final}", "success")
-    
-    session.pop('carrito', None) 
+
+    session.pop('carrito', None)
+    session.pop('fecha_pedido', None)
+
     return redirect(url_for('index'))
-
-
 
 @app.route('/consulta_dia', methods=['POST'])
 def consulta_dia():
@@ -142,11 +170,11 @@ def consulta_dia():
         flash("Día de la semana inválido", "warning")
         return redirect(url_for('index'))
 
-    # Ajuste para MySQL: 1=domingo, 2=lunes...
+    
     dia_num_mysql = (dias.index(dia_semana) + 2) % 7
     if dia_num_mysql == 0:
-        dia_num_mysql = 7  # sábado
-
+        dia_num_mysql = 7 
+        
     ventas = Pedidos.query.filter(
         text(f"DAYOFWEEK(fecha_pedido) = {dia_num_mysql}")
     ).all()
@@ -170,7 +198,7 @@ def consulta_dia():
 def consulta_mes():
     form = forms.UserForm(request.form)
 
-    nombre_mes = request.form.get('mes_texto', '').strip().lower()  # Ej: "marzo"
+    nombre_mes = request.form.get('mes_texto', '').strip().lower()  
     if not nombre_mes:
         flash("Debes ingresar un mes para consultar las ventas", "warning")
         return redirect(url_for('index'))
